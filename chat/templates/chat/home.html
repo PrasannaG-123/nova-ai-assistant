@@ -1,0 +1,3724 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>NOVA - AI Assistant</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        /* =====================================================
+           THEME
+        ===================================================== */
+
+        :root {
+
+            --bg-main: #0f0c29;
+            --bg-secondary: #302b63;
+
+            --bg-card:
+                rgba(255,255,255,0.10);
+
+            --bg-sidebar:
+                rgba(0,0,0,0.25);
+
+            --text-main: #ffffff;
+
+            --text-secondary:
+                #d7d7e8;
+
+            --text-muted:
+                #a9a9bd;
+
+            --border:
+                rgba(255,255,255,0.15);
+
+            --input-bg:
+                rgba(0,0,0,0.25);
+
+            --accent: #8e2de2;
+
+            --accent-dark: #4a00e0;
+
+            --danger: #ff6b7a;
+
+            --success: #4cff88;
+
+            --warning: #ffd166;
+        }
+
+
+        body.light-theme {
+
+            --bg-main: #eef1ff;
+
+            --bg-secondary: #dfe4ff;
+
+            --bg-card:
+                rgba(255,255,255,0.70);
+
+            --bg-sidebar:
+                rgba(255,255,255,0.55);
+
+            --text-main: #17172b;
+
+            --text-secondary:
+                #44445c;
+
+            --text-muted:
+                #707087;
+
+            --border:
+                rgba(0,0,0,0.10);
+
+            --input-bg:
+                rgba(255,255,255,0.70);
+        }
+
+
+        /* =====================================================
+           BODY
+        ===================================================== */
+
+        body {
+
+            min-height: 100vh;
+
+            font-family:
+                Arial,
+                sans-serif;
+
+            color:
+                var(--text-main);
+
+            background:
+
+                radial-gradient(
+                    circle at 10% 20%,
+                    #6c3cff 0%,
+                    transparent 30%
+                ),
+
+                radial-gradient(
+                    circle at 90% 10%,
+                    #00d4ff 0%,
+                    transparent 30%
+                ),
+
+                radial-gradient(
+                    circle at 80% 90%,
+                    #ff3cac 0%,
+                    transparent 30%
+                ),
+
+                linear-gradient(
+                    135deg,
+                    var(--bg-main),
+                    var(--bg-secondary),
+                    #24243e
+                );
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 20px;
+
+            transition:
+                background 0.3s,
+                color 0.3s;
+        }
+
+
+        /* =====================================================
+           APP
+        ===================================================== */
+
+        .app {
+
+            width: 100%;
+
+            max-width: 1200px;
+
+            height: 720px;
+
+            background:
+                var(--bg-card);
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 25px;
+
+            backdrop-filter:
+                blur(20px);
+
+            box-shadow:
+                0 25px 70px
+                rgba(0,0,0,0.4);
+
+            display: flex;
+
+            overflow: hidden;
+
+            position: relative;
+        }
+
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+
+            width: 280px;
+
+            flex-shrink: 0;
+
+            background:
+                var(--bg-sidebar);
+
+            border-right:
+                1px solid var(--border);
+
+            display: flex;
+
+            flex-direction: column;
+
+            transition:
+                transform 0.3s ease;
+        }
+
+
+        .sidebar-header {
+
+            padding:
+                22px 18px;
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+
+        .sidebar-title {
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            letter-spacing: 1px;
+
+            color:
+                var(--text-secondary);
+
+            margin-bottom: 14px;
+        }
+
+
+        .new-chat-button {
+
+            width: 100%;
+
+            border:
+                1px solid
+                rgba(255,255,255,0.20);
+
+            border-radius: 12px;
+
+            padding:
+                11px 14px;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            color: white;
+
+            cursor: pointer;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--accent-dark)
+                );
+
+            transition: 0.2s;
+        }
+
+
+        .new-chat-button:hover {
+
+            transform:
+                translateY(-1px);
+        }
+
+
+        /* =====================================================
+           HISTORY
+        ===================================================== */
+
+        .history {
+
+            flex: 1;
+
+            overflow-y: auto;
+
+            padding:
+                15px 10px;
+        }
+
+
+        .history-label {
+
+            font-size: 11px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1.5px;
+
+            color:
+                var(--text-muted);
+
+            padding:
+                5px 10px 12px;
+        }
+
+
+        .conversation-row {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 4px;
+
+            width: 100%;
+
+            margin-bottom: 5px;
+        }
+
+
+        .conversation-item {
+
+            flex: 1;
+
+            min-width: 0;
+
+            border: none;
+
+            background:
+                transparent;
+
+            color:
+                var(--text-secondary);
+
+            text-align: left;
+
+            padding: 11px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            font-size: 13px;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            transition: 0.2s;
+        }
+
+
+        .conversation-item:hover {
+
+            background:
+                rgba(255,255,255,0.10);
+        }
+
+
+        .conversation-item.active {
+
+            background:
+                rgba(142,45,226,0.30);
+
+            border:
+                1px solid
+                rgba(142,45,226,0.35);
+        }
+
+
+        .history-action {
+
+            flex-shrink: 0;
+
+            width: 31px;
+
+            height: 31px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background:
+                transparent;
+
+            color:
+                var(--text-muted);
+
+            cursor: pointer;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            font-size: 13px;
+        }
+
+
+        .history-action:hover {
+
+            background:
+                rgba(255,255,255,0.12);
+
+            color: white;
+        }
+
+
+        .history-action.delete:hover {
+
+            color:
+                var(--danger);
+
+            background:
+                rgba(255,70,90,0.18);
+        }
+
+
+        .empty-history {
+
+            text-align: center;
+
+            color:
+                var(--text-muted);
+
+            font-size: 12px;
+
+            padding:
+                25px 10px;
+
+            line-height: 1.5;
+        }
+
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        .main {
+
+            flex: 1;
+
+            min-width: 0;
+
+            display: flex;
+
+            flex-direction: column;
+        }
+
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .header {
+
+            padding:
+                15px 22px;
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items: center;
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+
+        .logo {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+
+        .logo-icon {
+
+            width: 45px;
+
+            height: 45px;
+
+            border-radius: 14px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 23px;
+
+            font-weight: bold;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--accent-dark)
+                );
+        }
+
+
+        .logo h1 {
+
+            font-size: 25px;
+
+            letter-spacing: 2px;
+        }
+
+
+        .header-right {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+        }
+
+
+        .header-button {
+
+            border: none;
+
+            border-radius: 9px;
+
+            padding:
+                8px 10px;
+
+            background:
+                rgba(255,255,255,0.08);
+
+            color:
+                var(--text-secondary);
+
+            cursor: pointer;
+
+            font-size: 13px;
+        }
+
+
+        .header-button:hover {
+
+            background:
+                rgba(255,255,255,0.16);
+        }
+
+
+        .status {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            font-size: 13px;
+
+            color: #c9ffd9;
+
+            margin-left: 4px;
+        }
+
+
+        .status-dot {
+
+            width: 8px;
+
+            height: 8px;
+
+            border-radius: 50%;
+
+            background:
+                #4cff88;
+
+            box-shadow:
+                0 0 12px #4cff88;
+        }
+
+
+        /* =====================================================
+           MOBILE MENU
+        ===================================================== */
+
+        .mobile-menu {
+
+            display: none;
+
+            border: none;
+
+            background: transparent;
+
+            color:
+                var(--text-main);
+
+            font-size: 22px;
+
+            cursor: pointer;
+        }
+
+
+        /* =====================================================
+           CHAT AREA
+        ===================================================== */
+
+        .chat-area {
+
+            flex: 1;
+
+            padding: 35px;
+
+            overflow-y: auto;
+
+            scroll-behavior: smooth;
+        }
+
+
+        .welcome {
+
+            text-align: center;
+
+            margin-top: 80px;
+        }
+
+
+        .welcome-icon {
+
+            font-size: 55px;
+
+            margin-bottom: 15px;
+
+            animation:
+                float 3s
+                ease-in-out
+                infinite;
+        }
+
+
+        @keyframes float {
+
+            0% {
+                transform:
+                    translateY(0);
+            }
+
+            50% {
+                transform:
+                    translateY(-10px);
+            }
+
+            100% {
+                transform:
+                    translateY(0);
+            }
+        }
+
+
+        .welcome h2 {
+
+            font-size: 32px;
+
+            margin-bottom: 12px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #ffffff,
+                    #8ee7ff,
+                    #ff9de6
+                );
+
+            -webkit-background-clip:
+                text;
+
+            -webkit-text-fill-color:
+                transparent;
+        }
+
+
+        .welcome p {
+
+            color:
+                var(--text-secondary);
+
+            font-size: 16px;
+        }
+
+
+        /* =====================================================
+           MESSAGE
+        ===================================================== */
+
+        .message {
+
+            display: flex;
+
+            margin-bottom: 18px;
+
+            animation:
+                messageIn
+                0.25s
+                ease;
+        }
+
+
+        @keyframes messageIn {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(8px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+
+        .message.user {
+
+            justify-content:
+                flex-end;
+        }
+
+
+        .message.bot {
+
+            justify-content:
+                flex-start;
+        }
+
+
+        .message-wrapper {
+
+            max-width: 78%;
+
+            position: relative;
+        }
+
+
+        .message-content {
+
+            padding:
+                14px 18px;
+
+            border-radius: 16px;
+
+            font-size: 15px;
+
+            line-height: 1.6;
+
+            word-wrap: break-word;
+
+            white-space: pre-wrap;
+        }
+
+
+        .message.user .message-content {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--accent-dark)
+                );
+
+            border-bottom-right-radius: 4px;
+        }
+
+
+        .message.bot .message-content {
+
+            background:
+                rgba(255,255,255,0.12);
+
+            border:
+                1px solid var(--border);
+
+            border-bottom-left-radius: 4px;
+        }
+
+
+        .copy-button {
+
+            margin-top: 5px;
+
+            border: none;
+
+            background:
+                transparent;
+
+            color:
+                var(--text-muted);
+
+            font-size: 11px;
+
+            cursor: pointer;
+
+            padding:
+                3px 6px;
+        }
+
+
+        .copy-button:hover {
+
+            color:
+                var(--text-main);
+        }
+
+
+        .typing {
+
+            opacity: 0.7;
+
+            font-style: italic;
+        }
+
+
+        /* =====================================================
+           FILE MESSAGE
+        ===================================================== */
+
+        .file-message {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            padding:
+                10px 13px;
+
+            border-radius: 13px;
+
+            background:
+                rgba(255,255,255,0.10);
+
+            border:
+                1px solid
+                rgba(255,255,255,0.15);
+
+            margin-bottom: 6px;
+
+            max-width: 330px;
+        }
+
+
+        .file-icon {
+
+            font-size: 23px;
+        }
+
+
+        .file-info {
+
+            min-width: 0;
+        }
+
+
+        .file-name {
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+        }
+
+
+        .file-size {
+
+            font-size: 11px;
+
+            color:
+                var(--text-muted);
+
+            margin-top: 3px;
+        }
+
+
+        /* =====================================================
+           INPUT AREA
+        ===================================================== */
+
+        .input-area {
+
+            padding:
+                20px 25px 25px;
+
+            border-top:
+                1px solid var(--border);
+        }
+
+
+        /* =====================================================
+           UPLOAD STATUS
+        ===================================================== */
+
+        .upload-status-container {
+
+            display: none;
+
+            margin-bottom: 10px;
+        }
+
+
+        .upload-status-container.visible {
+
+            display: block;
+        }
+
+
+        .upload-status {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            padding:
+                10px 13px;
+
+            border-radius: 12px;
+
+            background:
+                rgba(255,255,255,0.08);
+
+            border:
+                1px solid
+                var(--border);
+
+            font-size: 13px;
+        }
+
+
+        .upload-status.uploading {
+
+            border-color:
+                rgba(255,209,102,0.45);
+
+            background:
+                rgba(255,209,102,0.10);
+
+            color:
+                var(--warning);
+        }
+
+
+        .upload-status.success {
+
+            border-color:
+                rgba(76,255,136,0.40);
+
+            background:
+                rgba(76,255,136,0.10);
+
+            color:
+                var(--success);
+        }
+
+
+        .upload-status.error {
+
+            border-color:
+                rgba(255,107,122,0.45);
+
+            background:
+                rgba(255,107,122,0.10);
+
+            color:
+                var(--danger);
+        }
+
+
+        .upload-status-icon {
+
+            width: 20px;
+
+            height: 20px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-shrink: 0;
+        }
+
+
+        .upload-spinner {
+
+            width: 16px;
+
+            height: 16px;
+
+            border:
+                2px solid
+                rgba(255,209,102,0.30);
+
+            border-top-color:
+                var(--warning);
+
+            border-radius: 50%;
+
+            animation:
+                spin 0.8s linear infinite;
+        }
+
+
+        @keyframes spin {
+
+            to {
+                transform:
+                    rotate(360deg);
+            }
+        }
+
+
+        .upload-status-text {
+
+            flex: 1;
+
+            min-width: 0;
+        }
+
+
+        .upload-status-name {
+
+            display: block;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
+            font-weight: 600;
+        }
+
+
+        .upload-status-message {
+
+            display: block;
+
+            margin-top: 2px;
+
+            font-size: 11px;
+
+            opacity: 0.8;
+        }
+
+
+        .remove-upload {
+
+            border: none;
+
+            background: transparent;
+
+            color:
+                var(--text-muted);
+
+            cursor: pointer;
+
+            font-size: 18px;
+
+            padding: 3px 5px;
+        }
+
+
+        .remove-upload:hover {
+
+            color:
+                var(--danger);
+        }
+
+
+        /* =====================================================
+           INPUT BOX
+        ===================================================== */
+
+        .input-box {
+
+            display: flex;
+
+            align-items: flex-end;
+
+            gap: 10px;
+
+            background:
+                var(--input-bg);
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 18px;
+
+            padding: 12px;
+        }
+
+
+        .input-box:focus-within {
+
+            border-color:
+                var(--accent);
+        }
+
+
+        textarea {
+
+            flex: 1;
+
+            resize: none;
+
+            border: none;
+
+            outline: none;
+
+            background: transparent;
+
+            color:
+                var(--text-main);
+
+            font-size: 15px;
+
+            padding: 10px;
+
+            min-height: 50px;
+
+            max-height: 120px;
+
+            font-family:
+                Arial,
+                sans-serif;
+        }
+
+
+        textarea::placeholder {
+
+            color:
+                var(--text-muted);
+        }
+
+
+        /* =====================================================
+           ATTACH BUTTON
+        ===================================================== */
+
+        .attach-button {
+
+            width: 45px;
+
+            height: 45px;
+
+            flex-shrink: 0;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background:
+                rgba(255,255,255,0.08);
+
+            color:
+                var(--text-secondary);
+
+            cursor: pointer;
+
+            font-size: 20px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            transition: 0.2s;
+        }
+
+
+        .attach-button:hover {
+
+            background:
+                rgba(255,255,255,0.16);
+
+            transform:
+                translateY(-1px);
+        }
+
+
+        .attach-button.uploading {
+
+            opacity: 0.6;
+
+            cursor:
+                wait;
+        }
+
+
+        #fileInput {
+
+            display: none;
+        }
+
+
+        /* =====================================================
+           SEND BUTTON
+        ===================================================== */
+
+        .send-button {
+
+            border: none;
+
+            border-radius: 13px;
+
+            padding:
+                13px 22px;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            color: white;
+
+            cursor: pointer;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--accent-dark)
+                );
+        }
+
+
+        .send-button:disabled {
+
+            opacity: 0.5;
+
+            cursor:
+                not-allowed;
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .footer {
+
+            text-align: center;
+
+            font-size: 12px;
+
+            color:
+                var(--text-muted);
+
+            margin-top: 10px;
+        }
+
+
+        /* =====================================================
+           MOBILE OVERLAY
+        ===================================================== */
+
+        .sidebar-overlay {
+
+            display: none;
+
+            position: absolute;
+
+            inset: 0;
+
+            background:
+                rgba(0,0,0,0.55);
+
+            z-index: 20;
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 800px) {
+
+            body {
+
+                padding: 0;
+            }
+
+
+            .app {
+
+                height: 100vh;
+
+                max-width: none;
+
+                border-radius: 0;
+            }
+
+
+            .sidebar {
+
+                position: absolute;
+
+                top: 0;
+
+                left: 0;
+
+                bottom: 0;
+
+                z-index: 30;
+
+                width: 280px;
+
+                transform:
+                    translateX(-100%);
+            }
+
+
+            .sidebar.open {
+
+                transform:
+                    translateX(0);
+            }
+
+
+            .sidebar-overlay.open {
+
+                display: block;
+            }
+
+
+            .mobile-menu {
+
+                display: block;
+            }
+
+
+            .header {
+
+                padding:
+                    12px 15px;
+            }
+
+
+            .logo h1 {
+
+                font-size: 20px;
+            }
+
+
+            .logo-icon {
+
+                width: 38px;
+
+                height: 38px;
+
+                font-size: 19px;
+            }
+
+
+            .status {
+
+                display: none;
+            }
+
+
+            .chat-area {
+
+                padding: 20px;
+            }
+
+
+            .welcome {
+
+                margin-top: 50px;
+            }
+
+
+            .welcome h2 {
+
+                font-size: 25px;
+            }
+
+
+            .message-wrapper {
+
+                max-width: 90%;
+            }
+
+
+            .input-area {
+
+                padding: 12px;
+            }
+
+
+            .send-button {
+
+                padding:
+                    12px 16px;
+            }
+
+        }
+
+
+        @media (max-width: 450px) {
+
+            .header-button {
+
+                padding: 7px;
+
+                font-size: 11px;
+            }
+
+
+            .header-right {
+
+                gap: 4px;
+            }
+
+
+            .message-content {
+
+                font-size: 14px;
+            }
+
+
+            .attach-button {
+
+                width: 42px;
+
+                height: 42px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+    <!-- =====================================================
+         MOBILE OVERLAY
+    ====================================================== -->
+
+    <div
+        id="sidebarOverlay"
+        class="sidebar-overlay"
+    ></div>
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside
+        id="sidebar"
+        class="sidebar"
+    >
+
+        <div class="sidebar-header">
+
+            <div class="sidebar-title">
+                NOVA
+            </div>
+
+
+            <button
+                id="newChatButton"
+                class="new-chat-button"
+                type="button"
+            >
+                + New Chat
+            </button>
+
+        </div>
+
+
+        <div class="history">
+
+            <div class="history-label">
+                History
+            </div>
+
+
+            <div id="conversationList">
+
+                <div class="empty-history">
+                    No conversations yet.
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="main">
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <div class="header">
+
+
+            <div class="logo">
+
+                <button
+                    id="mobileMenuButton"
+                    class="mobile-menu"
+                    type="button"
+                >
+                    ☰
+                </button>
+
+
+                <div class="logo-icon">
+                    N
+                </div>
+
+
+                <h1>
+                    NOVA
+                </h1>
+
+            </div>
+
+
+            <div class="header-right">
+
+
+                <button
+                    id="themeButton"
+                    class="header-button"
+                    type="button"
+                    title="Toggle theme"
+                >
+                    🌙
+                </button>
+
+
+                <button
+                    id="profileButton"
+                    class="header-button"
+                    type="button"
+                >
+                    👤 Profile
+                </button>
+
+
+                <button
+                    id="logoutButton"
+                    class="header-button"
+                    type="button"
+                >
+                    🔐 Logout
+                </button>
+
+
+                <div class="status">
+
+                    <span class="status-dot"></span>
+
+                    Online
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             CHAT AREA
+        ================================================== -->
+
+        <div
+            class="chat-area"
+            id="chatArea"
+        >
+
+            <div
+                class="welcome"
+                id="welcome"
+            >
+
+                <div class="welcome-icon">
+                    ✦
+                </div>
+
+
+                <h2>
+                    Welcome, {{ user.username }}!
+                </h2>
+
+
+                <p>
+                    Your intelligent AI assistant is ready.
+                    Ask NOVA anything.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             INPUT AREA
+        ================================================== -->
+
+        <div class="input-area">
+
+
+            <!-- =================================================
+                 UPLOAD STATUS
+            ================================================== -->
+
+            <div
+                id="uploadStatusContainer"
+                class="upload-status-container"
+            >
+
+                <div
+                    id="uploadStatus"
+                    class="upload-status"
+                >
+
+                    <div
+                        id="uploadStatusIcon"
+                        class="upload-status-icon"
+                    >
+                        📎
+                    </div>
+
+
+                    <div class="upload-status-text">
+
+                        <span
+                            id="uploadStatusName"
+                            class="upload-status-name"
+                        ></span>
+
+
+                        <span
+                            id="uploadStatusMessage"
+                            class="upload-status-message"
+                        ></span>
+
+                    </div>
+
+
+                    <button
+                        id="removeUploadButton"
+                        class="remove-upload"
+                        type="button"
+                        title="Remove file"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="input-box">
+
+
+                <!-- HIDDEN FILE INPUT -->
+
+                <input
+                    id="fileInput"
+                    type="file"
+                    accept="
+                        .pdf,
+                        .doc,
+                        .docx,
+                        .txt,
+                        .png,
+                        .jpg,
+                        .jpeg,
+                        .webp,
+                        .gif
+                    "
+                >
+
+
+                <!-- ATTACH -->
+
+                <button
+                    id="attachButton"
+                    class="attach-button"
+                    type="button"
+                    title="Upload document or image"
+                >
+                    📎
+                </button>
+
+
+                <!-- TEXT -->
+
+                <textarea
+                    id="messageInput"
+                    placeholder="Message NOVA..."
+                    rows="2"
+                ></textarea>
+
+
+                <!-- SEND -->
+
+                <button
+                    id="sendButton"
+                    class="send-button"
+                    type="button"
+                >
+                    Send
+                </button>
+
+            </div>
+
+
+            <div class="footer">
+
+                NOVA AI Assistant •
+
+                Your intelligent conversation partner
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+
+const messageInput =
+    document.getElementById(
+        "messageInput"
+    );
+
+
+const sendButton =
+    document.getElementById(
+        "sendButton"
+    );
+
+
+const chatArea =
+    document.getElementById(
+        "chatArea"
+    );
+
+
+const newChatButton =
+    document.getElementById(
+        "newChatButton"
+    );
+
+
+const conversationList =
+    document.getElementById(
+        "conversationList"
+    );
+
+
+const sidebar =
+    document.getElementById(
+        "sidebar"
+    );
+
+
+const sidebarOverlay =
+    document.getElementById(
+        "sidebarOverlay"
+    );
+
+
+const mobileMenuButton =
+    document.getElementById(
+        "mobileMenuButton"
+    );
+
+
+const themeButton =
+    document.getElementById(
+        "themeButton"
+    );
+
+
+const profileButton =
+    document.getElementById(
+        "profileButton"
+    );
+
+
+const logoutButton =
+    document.getElementById(
+        "logoutButton"
+    );
+
+
+const attachButton =
+    document.getElementById(
+        "attachButton"
+    );
+
+
+const fileInput =
+    document.getElementById(
+        "fileInput"
+    );
+
+
+const uploadStatusContainer =
+    document.getElementById(
+        "uploadStatusContainer"
+    );
+
+
+const uploadStatus =
+    document.getElementById(
+        "uploadStatus"
+    );
+
+
+const uploadStatusIcon =
+    document.getElementById(
+        "uploadStatusIcon"
+    );
+
+
+const uploadStatusName =
+    document.getElementById(
+        "uploadStatusName"
+    );
+
+
+const uploadStatusMessage =
+    document.getElementById(
+        "uploadStatusMessage"
+    );
+
+
+const removeUploadButton =
+    document.getElementById(
+        "removeUploadButton"
+    );
+
+
+/* =========================================================
+   CURRENT CONVERSATION
+========================================================= */
+
+
+let conversationId = null;
+
+
+/* =========================================================
+   CURRENT UPLOAD
+========================================================= */
+
+
+let currentUploadedFile = null;
+
+let uploadInProgress = false;
+
+
+/* =========================================================
+   CSRF
+========================================================= */
+
+
+function getCookie(name) {
+
+    let cookieValue = null;
+
+    if (
+        document.cookie &&
+        document.cookie !== ""
+    ) {
+
+        const cookies =
+            document.cookie.split(";");
+
+
+        for (
+            let cookie of cookies
+        ) {
+
+            cookie =
+                cookie.trim();
+
+
+            if (
+                cookie.substring(
+                    0,
+                    name.length + 1
+                ) ===
+                name + "="
+            ) {
+
+                cookieValue =
+                    decodeURIComponent(
+                        cookie.substring(
+                            name.length + 1
+                        )
+                    );
+
+                break;
+            }
+        }
+    }
+
+
+    return cookieValue;
+}
+
+
+const csrftoken =
+    getCookie("csrftoken");
+
+
+/* =========================================================
+   MOBILE SIDEBAR
+========================================================= */
+
+
+function openSidebar() {
+
+    sidebar.classList.add(
+        "open"
+    );
+
+    sidebarOverlay.classList.add(
+        "open"
+    );
+}
+
+
+function closeSidebar() {
+
+    sidebar.classList.remove(
+        "open"
+    );
+
+    sidebarOverlay.classList.remove(
+        "open"
+    );
+}
+
+
+mobileMenuButton.addEventListener(
+    "click",
+    openSidebar
+);
+
+
+sidebarOverlay.addEventListener(
+    "click",
+    closeSidebar
+);
+
+
+/* =========================================================
+   THEME
+========================================================= */
+
+
+function loadTheme() {
+
+    const theme =
+        localStorage.getItem(
+            "nova-theme"
+        );
+
+
+    if (
+        theme === "light"
+    ) {
+
+        document.body.classList.add(
+            "light-theme"
+        );
+
+        themeButton.textContent =
+            "☀️";
+
+    } else {
+
+        document.body.classList.remove(
+            "light-theme"
+        );
+
+        themeButton.textContent =
+            "🌙";
+    }
+}
+
+
+function toggleTheme() {
+
+    document.body.classList.toggle(
+        "light-theme"
+    );
+
+
+    const isLight =
+        document.body.classList.contains(
+            "light-theme"
+        );
+
+
+    localStorage.setItem(
+        "nova-theme",
+        isLight
+            ? "light"
+            : "dark"
+    );
+
+
+    themeButton.textContent =
+        isLight
+            ? "☀️"
+            : "🌙";
+}
+
+
+themeButton.addEventListener(
+    "click",
+    toggleTheme
+);
+
+
+loadTheme();
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+
+profileButton.addEventListener(
+    "click",
+    function() {
+
+        window.location.href =
+            "/profile/";
+    }
+);
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+logoutButton.addEventListener(
+    "click",
+    async function() {
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to logout?"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/logout/",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "X-CSRFToken":
+                                csrftoken,
+
+                            "X-Requested-With":
+                                "XMLHttpRequest"
+                        }
+                    }
+                );
+
+
+            if (
+                response.ok
+            ) {
+
+                window.location.href =
+                    "/signup/";
+
+            } else {
+
+                alert(
+                    "Logout failed."
+                );
+            }
+
+        }
+        catch (error) {
+
+            console.error(
+                "Logout error:",
+                error
+            );
+
+            alert(
+                "Could not logout."
+            );
+        }
+    }
+);
+
+
+/* =========================================================
+   WELCOME
+========================================================= */
+
+
+function showWelcome() {
+
+    chatArea.innerHTML = `
+
+        <div class="welcome">
+
+            <div class="welcome-icon">
+                ✦
+            </div>
+
+            <h2>
+                Welcome, {{ user.username }}!
+            </h2>
+
+            <p>
+                Your intelligent AI assistant is ready.
+                Ask NOVA anything.
+            </p>
+
+        </div>
+
+    `;
+}
+
+
+/* =========================================================
+   FORMAT FILE SIZE
+========================================================= */
+
+
+function formatFileSize(bytes) {
+
+    if (!bytes) {
+        return "0 KB";
+    }
+
+
+    if (
+        bytes < 1024
+    ) {
+
+        return bytes + " B";
+    }
+
+
+    if (
+        bytes < 1024 * 1024
+    ) {
+
+        return (
+            (bytes / 1024)
+                .toFixed(1) +
+            " KB"
+        );
+    }
+
+
+    return (
+        (bytes / (1024 * 1024))
+            .toFixed(1) +
+        " MB"
+    );
+}
+
+
+/* =========================================================
+   FILE ICON
+========================================================= */
+
+
+function getFileIcon(filename) {
+
+    const extension =
+        filename
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+
+    if (
+        extension === "pdf"
+    ) {
+        return "📕";
+    }
+
+
+    if (
+        [
+            "png",
+            "jpg",
+            "jpeg",
+            "webp",
+            "gif"
+        ].includes(extension)
+    ) {
+        return "🖼️";
+    }
+
+
+    if (
+        [
+            "doc",
+            "docx"
+        ].includes(extension)
+    ) {
+        return "📘";
+    }
+
+
+    if (
+        extension === "txt"
+    ) {
+        return "📄";
+    }
+
+
+    return "📎";
+}
+
+
+/* =========================================================
+   UPLOAD STATUS
+========================================================= */
+
+
+function showUploadStatus(
+    filename,
+    state,
+    message
+) {
+
+    uploadStatusContainer.classList.add(
+        "visible"
+    );
+
+
+    uploadStatus.className =
+        "upload-status " +
+        state;
+
+
+    uploadStatusName.textContent =
+        filename;
+
+
+    uploadStatusMessage.textContent =
+        message;
+
+
+    if (
+        state === "uploading"
+    ) {
+
+        uploadStatusIcon.innerHTML =
+            '<span class="upload-spinner"></span>';
+
+    }
+
+    else if (
+        state === "success"
+    ) {
+
+        uploadStatusIcon.textContent =
+            "✓";
+
+    }
+
+    else if (
+        state === "error"
+    ) {
+
+        uploadStatusIcon.textContent =
+            "✕";
+
+    }
+
+    else {
+
+        uploadStatusIcon.textContent =
+            "📎";
+    }
+}
+
+
+/* =========================================================
+   HIDE UPLOAD STATUS
+========================================================= */
+
+
+function hideUploadStatus() {
+
+    uploadStatusContainer.classList.remove(
+        "visible"
+    );
+
+    uploadStatus.className =
+        "upload-status";
+
+    uploadStatusName.textContent =
+        "";
+
+    uploadStatusMessage.textContent =
+        "";
+
+    uploadStatusIcon.textContent =
+        "📎";
+}
+
+
+/* =========================================================
+   REMOVE CURRENT UPLOAD
+========================================================= */
+
+
+function removeCurrentUpload() {
+
+    currentUploadedFile =
+        null;
+
+    fileInput.value =
+        "";
+
+    uploadInProgress =
+        false;
+
+    attachButton.classList.remove(
+        "uploading"
+    );
+
+    attachButton.disabled =
+        false;
+
+    hideUploadStatus();
+}
+
+
+removeUploadButton.addEventListener(
+    "click",
+    removeCurrentUpload
+);
+
+
+/* =========================================================
+   OPEN FILE PICKER
+========================================================= */
+
+
+attachButton.addEventListener(
+    "click",
+    function() {
+
+        if (
+            uploadInProgress
+        ) {
+            return;
+        }
+
+        fileInput.click();
+    }
+);
+
+
+/* =========================================================
+   UPLOAD FILE
+========================================================= */
+
+
+async function uploadFile(
+    selectedFile
+) {
+
+    if (!selectedFile) {
+        return;
+    }
+
+
+    uploadInProgress =
+        true;
+
+
+    attachButton.classList.add(
+        "uploading"
+    );
+
+
+    attachButton.disabled =
+        true;
+
+
+    showUploadStatus(
+        selectedFile.name,
+        "uploading",
+        "Uploading file..."
+    );
+
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "file",
+        selectedFile
+    );
+
+
+    if (
+        conversationId
+    ) {
+
+        formData.append(
+            "conversation_id",
+            conversationId
+        );
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/library/upload/",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "X-CSRFToken":
+                            csrftoken,
+
+                        "X-Requested-With":
+                            "XMLHttpRequest"
+                    },
+
+                    body:
+                        formData
+                }
+            );
+
+
+        let data = null;
+
+
+        try {
+
+            data =
+                await response.json();
+
+        }
+        catch (jsonError) {
+
+            data = null;
+        }
+
+
+        if (
+            !response.ok ||
+            !data ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data &&
+                data.message
+                    ? data.message
+                    : "The file could not be uploaded."
+            );
+        }
+
+
+        /*
+         * IMPORTANT:
+         *
+         * We only show green SUCCESS
+         * after Django confirms that
+         * the file was actually saved.
+         */
+
+        currentUploadedFile =
+            data.file;
+
+
+        showUploadStatus(
+            selectedFile.name,
+            "success",
+            "Uploaded successfully • Saved to NOVA Library"
+        );
+
+
+        /*
+         * Show uploaded file
+         * inside the conversation.
+         */
+
+        addFileMessage(
+            selectedFile.name,
+            selectedFile.size,
+            "user"
+        );
+
+
+        await loadConversations();
+
+
+    }
+    catch (error) {
+
+        console.error(
+            "Upload error:",
+            error
+        );
+
+
+        currentUploadedFile =
+            null;
+
+
+        showUploadStatus(
+            selectedFile.name,
+            "error",
+            error.message ||
+            "Upload failed. Please try again."
+        );
+    }
+
+
+    finally {
+
+        uploadInProgress =
+            false;
+
+
+        attachButton.classList.remove(
+            "uploading"
+        );
+
+
+        attachButton.disabled =
+            false;
+    }
+}
+
+
+/* =========================================================
+   FILE INPUT CHANGE
+========================================================= */
+
+
+fileInput.addEventListener(
+    "change",
+    async function() {
+
+        const selectedFile =
+            fileInput.files[0];
+
+
+        if (!selectedFile) {
+            return;
+        }
+
+
+        await uploadFile(
+            selectedFile
+        );
+    }
+);
+
+
+/* =========================================================
+   ADD FILE MESSAGE
+========================================================= */
+
+
+function addFileMessage(
+    filename,
+    filesize,
+    type
+) {
+
+    const message =
+        document.createElement(
+            "div"
+        );
+
+
+    message.className =
+        "message " +
+        type;
+
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+
+    wrapper.className =
+        "message-wrapper";
+
+
+    const fileBox =
+        document.createElement(
+            "div"
+        );
+
+
+    fileBox.className =
+        "file-message";
+
+
+    const icon =
+        document.createElement(
+            "div"
+        );
+
+
+    icon.className =
+        "file-icon";
+
+
+    icon.textContent =
+        getFileIcon(
+            filename
+        );
+
+
+    const info =
+        document.createElement(
+            "div"
+        );
+
+
+    info.className =
+        "file-info";
+
+
+    const name =
+        document.createElement(
+            "div"
+        );
+
+
+    name.className =
+        "file-name";
+
+
+    name.textContent =
+        filename;
+
+
+    const size =
+        document.createElement(
+            "div"
+        );
+
+
+    size.className =
+        "file-size";
+
+
+    size.textContent =
+        formatFileSize(
+            filesize
+        );
+
+
+    info.appendChild(
+        name
+    );
+
+
+    info.appendChild(
+        size
+    );
+
+
+    fileBox.appendChild(
+        icon
+    );
+
+
+    fileBox.appendChild(
+        info
+    );
+
+
+    wrapper.appendChild(
+        fileBox
+    );
+
+
+    message.appendChild(
+        wrapper
+    );
+
+
+    chatArea.appendChild(
+        message
+    );
+
+
+    chatArea.scrollTop =
+        chatArea.scrollHeight;
+}
+
+
+/* =========================================================
+   ADD MESSAGE
+========================================================= */
+
+
+function addMessage(
+    text,
+    type
+) {
+
+    const message =
+        document.createElement(
+            "div"
+        );
+
+
+    message.className =
+        "message " +
+        type;
+
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+
+    wrapper.className =
+        "message-wrapper";
+
+
+    const content =
+        document.createElement(
+            "div"
+        );
+
+
+    content.className =
+        "message-content";
+
+
+    content.textContent =
+        text;
+
+
+    wrapper.appendChild(
+        content
+    );
+
+
+    if (
+        type === "bot"
+    ) {
+
+        const copyButton =
+            document.createElement(
+                "button"
+            );
+
+
+        copyButton.type =
+            "button";
+
+
+        copyButton.className =
+            "copy-button";
+
+
+        copyButton.textContent =
+            "📋 Copy";
+
+
+        copyButton.addEventListener(
+            "click",
+            async function() {
+
+                try {
+
+                    await navigator.clipboard.writeText(
+                        content.textContent
+                    );
+
+
+                    copyButton.textContent =
+                        "✓ Copied";
+
+
+                    setTimeout(
+                        function() {
+
+                            copyButton.textContent =
+                                "📋 Copy";
+
+                        },
+                        1500
+                    );
+
+                }
+                catch (error) {
+
+                    console.error(
+                        "Copy error:",
+                        error
+                    );
+                }
+            }
+        );
+
+
+        wrapper.appendChild(
+            copyButton
+        );
+    }
+
+
+    message.appendChild(
+        wrapper
+    );
+
+
+    chatArea.appendChild(
+        message
+    );
+
+
+    chatArea.scrollTop =
+        chatArea.scrollHeight;
+
+
+    return message;
+}
+
+
+/* =========================================================
+   LOAD CONVERSATIONS
+========================================================= */
+
+
+async function loadConversations() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/conversations/"
+            );
+
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+                "Could not load conversations."
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        conversationList.innerHTML =
+            "";
+
+
+        if (
+            !data.conversations ||
+            data.conversations.length === 0
+        ) {
+
+            conversationList.innerHTML = `
+
+                <div class="empty-history">
+                    No conversations yet.
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        data.conversations.forEach(
+            function(conversation) {
+
+                createConversationRow(
+                    conversation
+                );
+            }
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "History error:",
+            error
+        );
+
+
+        conversationList.innerHTML = `
+
+            <div class="empty-history">
+                Unable to load history.
+            </div>
+
+        `;
+    }
+}
+
+
+/* =========================================================
+   CREATE CONVERSATION ROW
+========================================================= */
+
+
+function createConversationRow(
+    conversation
+) {
+
+    const row =
+        document.createElement(
+            "div"
+        );
+
+
+    row.className =
+        "conversation-row";
+
+
+    const item =
+        document.createElement(
+            "button"
+        );
+
+
+    item.type =
+        "button";
+
+
+    item.className =
+        "conversation-item";
+
+
+    item.textContent =
+        conversation.title;
+
+
+    item.title =
+        conversation.title;
+
+
+    if (
+        Number(conversationId) ===
+        Number(conversation.id)
+    ) {
+
+        item.classList.add(
+            "active"
+        );
+    }
+
+
+    item.addEventListener(
+        "click",
+        function() {
+
+            openConversation(
+                conversation.id
+            );
+        }
+    );
+
+
+    const renameButton =
+        document.createElement(
+            "button"
+        );
+
+
+    renameButton.type =
+        "button";
+
+
+    renameButton.className =
+        "history-action";
+
+
+    renameButton.textContent =
+        "✏️";
+
+
+    renameButton.title =
+        "Rename conversation";
+
+
+    renameButton.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+
+            renameConversation(
+                conversation.id,
+                conversation.title
+            );
+        }
+    );
+
+
+    const deleteButton =
+        document.createElement(
+            "button"
+        );
+
+
+    deleteButton.type =
+        "button";
+
+
+    deleteButton.className =
+        "history-action delete";
+
+
+    deleteButton.textContent =
+        "🗑";
+
+
+    deleteButton.title =
+        "Delete conversation";
+
+
+    deleteButton.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+
+            deleteConversation(
+                conversation.id,
+                conversation.title
+            );
+        }
+    );
+
+
+    row.appendChild(
+        item
+    );
+
+
+    row.appendChild(
+        renameButton
+    );
+
+
+    row.appendChild(
+        deleteButton
+    );
+
+
+    conversationList.appendChild(
+        row
+    );
+}
+
+
+/* =========================================================
+   OPEN CONVERSATION
+========================================================= */
+
+
+async function openConversation(
+    id
+) {
+
+    try {
+
+        conversationId =
+            Number(id);
+
+
+        const response =
+            await fetch(
+                `/conversations/${id}/`
+            );
+
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+                "Could not load conversation."
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        chatArea.innerHTML =
+            "";
+
+
+        if (
+            data.messages &&
+            data.messages.length > 0
+        ) {
+
+            data.messages.forEach(
+                function(message) {
+
+                    const type =
+                        message.role ===
+                        "user"
+                            ? "user"
+                            : "bot";
+
+
+                    addMessage(
+                        message.content,
+                        type
+                    );
+                }
+            );
+
+        }
+        else {
+
+            showWelcome();
+        }
+
+
+        await loadConversations();
+
+
+        closeSidebar();
+
+
+        messageInput.focus();
+
+    }
+    catch (error) {
+
+        console.error(
+            "Conversation error:",
+            error
+        );
+
+
+        showWelcome();
+
+
+        addMessage(
+            "Sorry, I could not load this conversation.",
+            "bot"
+        );
+    }
+}
+
+
+/* =========================================================
+   RENAME CONVERSATION
+========================================================= */
+
+
+async function renameConversation(
+    id,
+    oldTitle
+) {
+
+    const newTitle =
+        prompt(
+            "Enter a new conversation title:",
+            oldTitle
+        );
+
+
+    if (
+        newTitle === null
+    ) {
+
+        return;
+    }
+
+
+    const title =
+        newTitle.trim();
+
+
+    if (!title) {
+
+        alert(
+            "Conversation title cannot be empty."
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/conversations/${id}/rename/`,
+                {
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "X-CSRFToken":
+                            csrftoken,
+
+                        "X-Requested-With":
+                            "XMLHttpRequest"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            title: title
+                        })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Could not rename conversation."
+            );
+        }
+
+
+        await loadConversations();
+
+    }
+    catch (error) {
+
+        console.error(
+            "Rename error:",
+            error
+        );
+
+
+        alert(
+            error.message ||
+            "Sorry, the conversation could not be renamed."
+        );
+    }
+}
+
+
+/* =========================================================
+   DELETE CONVERSATION
+========================================================= */
+
+
+async function deleteConversation(
+    id,
+    title
+) {
+
+    const confirmed =
+        confirm(
+            `Delete "${title}"?\n\nThis conversation and all its messages will be permanently deleted.`
+        );
+
+
+    if (!confirmed) {
+
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/conversations/${id}/delete/`,
+                {
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "X-CSRFToken":
+                            csrftoken,
+
+                        "X-Requested-With":
+                            "XMLHttpRequest"
+                    }
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Could not delete conversation."
+            );
+        }
+
+
+        if (
+            Number(conversationId) ===
+            Number(id)
+        ) {
+
+            conversationId =
+                null;
+
+
+            showWelcome();
+
+
+            removeCurrentUpload();
+        }
+
+
+        await loadConversations();
+
+    }
+    catch (error) {
+
+        console.error(
+            "Delete error:",
+            error
+        );
+
+
+        alert(
+            error.message ||
+            "Sorry, the conversation could not be deleted."
+        );
+    }
+}
+
+
+/* =========================================================
+   NEW CHAT
+========================================================= */
+
+
+function startNewChat() {
+
+    conversationId =
+        null;
+
+
+    showWelcome();
+
+
+    removeCurrentUpload();
+
+
+    document
+        .querySelectorAll(
+            ".conversation-item"
+        )
+        .forEach(
+            function(item) {
+
+                item.classList.remove(
+                    "active"
+                );
+            }
+        );
+
+
+    messageInput.value =
+        "";
+
+
+    closeSidebar();
+
+
+    messageInput.focus();
+}
+
+
+newChatButton.addEventListener(
+    "click",
+    startNewChat
+);
+
+
+/* =========================================================
+   SEND MESSAGE
+========================================================= */
+
+
+async function sendMessage() {
+
+    const message =
+        messageInput.value.trim();
+
+
+    if (!message) {
+
+        return;
+    }
+
+
+    addMessage(
+        message,
+        "user"
+    );
+
+
+    messageInput.value =
+        "";
+
+
+    sendButton.disabled =
+        true;
+
+
+    sendButton.textContent =
+        "Thinking...";
+
+
+    const typingMessage =
+        addMessage(
+            "NOVA is thinking...",
+            "bot"
+        );
+
+
+    typingMessage
+        .querySelector(
+            ".message-content"
+        )
+        .classList.add(
+            "typing"
+        );
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/chat/",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "X-CSRFToken":
+                            csrftoken,
+
+                        "X-Requested-With":
+                            "XMLHttpRequest"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            message:
+                                message,
+
+                            conversation_id:
+                                conversationId
+                        })
+                }
+            );
+
+
+        if (
+            typingMessage &&
+            typingMessage.parentNode
+        ) {
+
+            typingMessage.remove();
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+                data.response ||
+                data.message ||
+                "Server error."
+            );
+        }
+
+
+        if (
+            data.conversation_id
+        ) {
+
+            conversationId =
+                Number(
+                    data.conversation_id
+                );
+        }
+
+
+        if (
+            data.response
+        ) {
+
+            addMessage(
+                data.response,
+                "bot"
+            );
+        }
+
+
+        await loadConversations();
+
+    }
+    catch (error) {
+
+        console.error(
+            "NOVA error:",
+            error
+        );
+
+
+        if (
+            typingMessage &&
+            typingMessage.parentNode
+        ) {
+
+            typingMessage.remove();
+        }
+
+
+        addMessage(
+            error.message ||
+            "Sorry, NOVA could not connect to the server.",
+            "bot"
+        );
+    }
+
+
+    sendButton.disabled =
+        false;
+
+
+    sendButton.textContent =
+        "Send";
+
+
+    messageInput.focus();
+}
+
+
+/* =========================================================
+   SEND BUTTON
+========================================================= */
+
+
+sendButton.addEventListener(
+    "click",
+    sendMessage
+);
+
+
+/* =========================================================
+   ENTER KEY
+========================================================= */
+
+
+messageInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            sendMessage();
+        }
+    }
+);
+
+
+/* =========================================================
+   AUTO REFRESH SIDEBAR
+========================================================= */
+
+
+setInterval(
+    function() {
+
+        loadConversations();
+
+    },
+    10000
+);
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+
+loadConversations();
+
+messageInput.focus();
+
+
+</script>
+
+
+</body>
+
+</html>
+```
